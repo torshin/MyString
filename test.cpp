@@ -220,6 +220,12 @@ void testInsert()
 	assert(!answ1.insert(s2,1));
 	assert(answ1=="The insert this destination string");
 
+	MyString null1, null2;
+	assert(!(null1.insert(strSourceL,2)));
+	assert(!(null2.insert(strSourceL,0)));
+	assert(null1.insert(strSourceS,1));
+	assert(null1==strSourceS);
+
 }
 
 void testErase()
