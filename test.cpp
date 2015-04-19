@@ -27,6 +27,7 @@ void testCompare()
 	assert (s4 != c3);
 	char *null1="";
 	assert(s4==null1);
+
 }
 
 void testCopy()
@@ -45,6 +46,12 @@ void testCopy()
 	assert (s2 == s7);
 	s1.copy (s7);
 	assert (s7 == s3);
+
+	MyString n1, n2, n3;
+	s1.copy(n1);
+	assert(s3==n1);
+	n2.copy(n1);
+	assert(n1==n3);
 }
 
 void testAssign()
@@ -75,13 +82,12 @@ void testAssign()
 	assert (s9 == s10);
 	assert (s2 == s11);
 
-	MyString null1, null2(""), null3;
-	assert(null1==null2);
+	MyString null1, null3;
 	assert(null1==null3);
-	assert(null2==null3);
 	null1=s5;
-	s1=s5;
+	assert(null1==s5);
 	null1=null3;
+	assert(null1==null3);
 
 }
 
@@ -220,11 +226,12 @@ void testInsert()
 	assert(!answ1.insert(s2,1));
 	assert(answ1=="The insert this destination string");
 
-	MyString null1, null2;
+	MyString null1, null2, null3;
 	assert(!(null1.insert(strSourceL,2)));
 	assert(!(null2.insert(strSourceL,0)));
 	assert(null1.insert(strSourceS,1));
 	assert(null1==strSourceS);
+	assert(!null3.insert('c',1));
 
 }
 

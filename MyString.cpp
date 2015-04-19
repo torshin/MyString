@@ -222,10 +222,11 @@ bool MyString::insert (const char ch, size_t pos)
 			ptr[i] = temp.ptr[i];
 		}
 		ptr[pos - 1] = ch;
-		for (size_t i = pos; i < lengthDest + 2; i++)
+		for (size_t i = pos; i < lengthDest + 1; i++)
 		{
 			ptr[i] = temp.ptr[i - 1];
 		}
+		ptr[lengthDest+1]='\0';
 	}
 	return (ptr[pos - 1] == ch);
 }
