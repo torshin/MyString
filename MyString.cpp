@@ -81,34 +81,37 @@ MyString::MyString (const MyString &s)
 
 void MyString::copy (MyString &s)
 {
-	if (ptr != nullptr)
+	if (this != &s)
 	{
-		size_t len = length();
-		s.delAndNewCount();
-		s.ptr = new char[len + 1];
-		for (size_t i = 0; i < len; i++)
+		if (ptr != nullptr)
 		{
-			s.ptr[i] = ptr[i];
+			size_t len = length();
+			s.delAndNewCount();
+			s.ptr = new char[len + 1];
+			for (size_t i = 0; i < len; i++)
+			{
+				s.ptr[i] = ptr[i];
+			}
+			s.ptr[len] = '\0';
 		}
-		s.ptr[len] = '\0';
-	}
-	else
-	{
-		if (s.count != nullptr)
+		else
 		{
-			if (*s.count == 1)
+			if (s.count != nullptr)
 			{
-				delete[] s.ptr;
-				delete s.count;
+				if (*s.count == 1)
+				{
+					delete[] s.ptr;
+					delete s.count;
+				}
+				else
+				{
+					(*s.count)--;
+				}
 			}
-			else
-			{
-				(*s.count)--;
-			}
+			//		s.~MyString();
+			s.ptr = ptr;
+			s.count = count;
 		}
-		//		s.~MyString();
-		s.ptr = ptr;
-		s.count = count;
 	}
 }
 
@@ -209,26 +212,28 @@ void MyString::swap (MyString &s)
 	//	}
 }
 
-bool MyString::insert (const char ch, size_t pos)
+bool MyString::insert (const char ch, size_t (pos))
 {
 	MyString temp (ptr);
 	size_t lengthDest = length();
-	if (pos - 1 <= lengthDest && ch != '\0')
+	bool compare = false;
+	if (pos <= lengthDest && ch != '\0')
 	{
 		delAndNewCount();
 		ptr = new char[lengthDest + 2];
-		for (size_t  i = 0; i < pos - 1; i++)
+		for (size_t  i = 0; i < pos; i++)
 		{
 			ptr[i] = temp.ptr[i];
 		}
-		ptr[pos - 1] = ch;
-		for (size_t i = pos; i < lengthDest + 1; i++)
+		ptr[pos] = ch;
+		for (size_t i = pos + 1; i < lengthDest + 1; i++)
 		{
 			ptr[i] = temp.ptr[i - 1];
 		}
-		ptr[lengthDest+1]='\0';
+		ptr[lengthDest + 1] = '\0';
+		compare = true;
 	}
-	return (ptr[pos - 1] == ch);
+	return compare;
 }
 
 bool MyString::insert (const char *s, size_t pos)
@@ -236,25 +241,25 @@ bool MyString::insert (const char *s, size_t pos)
 	size_t lengthDest = length();
 	size_t lengthSource = strlength (s);
 	bool compare = false;
-	if (pos - 1 <= lengthDest && lengthSource > 0 && pos >0)
+	if (pos <= lengthDest && lengthSource > 0 && pos >= 0)
 	{
 		MyString temp (ptr);
 		delAndNewCount();
 		ptr = new char[lengthSource + lengthDest + 1];
-		for (size_t  i = 0; i < pos - 1; i++)
+		for (size_t  i = 0; i < pos; i++)
 		{
 			ptr[i] = temp.ptr[i];
 		}
 		for (size_t  i = 0; i < lengthSource; i++)
 		{
-			ptr[pos - 1 + i] = s[i];
+			ptr[pos + i] = s[i];
 		}
-		for (size_t i = pos - 1; i < lengthDest; i++)
+		for (size_t i = pos; i < lengthDest; i++)
 		{
 			ptr[lengthSource + i] = temp.ptr[i];
 		}
 		ptr[lengthSource + lengthDest] = '\0';
-		compare=true;
+		compare = true;
 	}
 	return compare;
 }
@@ -264,25 +269,25 @@ bool MyString::insert (const MyString &s, size_t pos)
 	size_t lengthDest = length();
 	size_t lengthSource = s.length();
 	bool compare = false;
-	if (pos - 1 <= lengthDest && lengthSource > 0 && pos>0)
+	if (pos <= lengthDest && lengthSource > 0 && pos >= 0)
 	{
 		MyString temp (ptr);
 		delAndNewCount();
 		ptr = new char[lengthSource + lengthDest + 1];
-		for (size_t  i = 0; i < pos - 1; i++)
+		for (size_t  i = 0; i < pos; i++)
 		{
 			ptr[i] = temp.ptr[i];
 		}
 		for (size_t  i = 0; i < lengthSource; i++)
 		{
-			ptr[pos - 1 + i] = s.ptr[i];
+			ptr[pos + i] = s.ptr[i];
 		}
-		for (size_t i = pos - 1; i < lengthDest ; i++)
+		for (size_t i = pos; i < lengthDest ; i++)
 		{
 			ptr[lengthSource + i] = temp.ptr[i];
 		}
 		ptr[lengthSource + lengthDest] = '\0';
-		compare=true;
+		compare = true;
 	}
 	return compare;
 }
@@ -291,9 +296,9 @@ bool MyString::erase (const size_t pos, const size_t amount)
 {
 	size_t lenstr = length();
 	bool compare = false;
-	if (pos + amount - 1 <= lenstr && amount > 0)
+	if (pos + amount <= lenstr && amount > 0)
 	{
-		if (pos == 1 && amount == lenstr)
+		if (pos == 0 && amount == lenstr)
 		{
 			if (*count < 2)
 			{
@@ -304,26 +309,26 @@ bool MyString::erase (const size_t pos, const size_t amount)
 			else
 			{
 				(*count)--;
-				//				count=new size_t ;
-				//				delete count;
 				count = nullptr;
 			}
 			ptr = nullptr;
+			compare = true;
 		}
 		else
 		{
 			MyString temp (ptr);
 			delAndNewCount();
-			ptr = new char[lenstr - amount];
-			for (size_t i = 0; i < pos - 1; i++)
+			ptr = new char[lenstr - amount + 1];
+			for (size_t i = 0; i < pos ; i++)
 			{
 				ptr[i] = temp.ptr[i];
 			}
-			for (size_t i = pos - 1; i < lenstr - amount + 1; i++)
+			for (size_t i = pos ; i < lenstr - amount; i++)
 			{
 				ptr[i] = temp.ptr[i + amount];
 			}
-			compare = (ptr[pos - 2] == temp.ptr[pos - 2] && ptr[pos - 1] == temp.ptr[pos - 1 + amount]);
+			ptr[lenstr - amount] = '\0';
+			compare = (ptr[pos - 1] == temp.ptr[pos - 1] && ptr[pos] == temp.ptr[pos + amount]);
 		}
 	}
 	return compare;
@@ -411,7 +416,7 @@ MyString MyString::operator+ (const char *const s)
 	MyString temp (ptr);
 	size_t lenstr = length();
 	size_t lengthSource = strlength (s);
-	char *str;
+	char *str = nullptr;
 	if (lengthSource != 0 || lenstr != 0)
 	{
 		str = new char[lenstr + lengthSource + 1];
@@ -430,16 +435,16 @@ MyString MyString::operator+ (const char *const s)
 char MyString::operator[] (size_t pos)
 {
 	char ch = '\0';
-	if (pos > 0 && pos <= length())
+	if (pos < length())
 	{
-		ch = ptr[pos - 1];
+		ch = ptr[pos ];
 	}
 	return ch;
 }
 
 bool MyString::operator == (const MyString &s)
 {
-	bool compare=true;
+	bool compare = true;
 	size_t lenstr = length();
 	if (lenstr == s.length())
 	{
@@ -468,7 +473,7 @@ bool MyString::operator == (const MyString &s)
 
 bool MyString::operator == (const char *s)
 {
-	bool compare=true;
+	bool compare = true;
 	size_t lenstr = length();
 	if (lenstr == strlength (s))
 	{

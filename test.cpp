@@ -185,7 +185,7 @@ void testSwap()
 
 void testInsert()
 {
-	size_t pos = 5;
+	size_t pos = 4;
 	MyString strDest ("The destination string");
 	MyString strSourceS ("insert this ");
 	MyString strSourceL ("please insert this string to dest ");
@@ -219,19 +219,23 @@ void testInsert()
 	assert (strDest == answ5);
 	assert (! (strDest == notansw));
 	MyString s1, s2;
-	assert(!s1.insert(s2,1));
+	assert(!s1.insert(s2,0));
 	assert (s1 == s1);
-	assert(s1.insert(answ1,1));
+	assert(s1.insert(answ1,0));
 	assert(answ1==s1);
-	assert(!answ1.insert(s2,1));
+	assert(!answ1.insert(s2,0));
 	assert(answ1=="The insert this destination string");
 
 	MyString null1, null2, null3;
 	assert(!(null1.insert(strSourceL,2)));
-	assert(!(null2.insert(strSourceL,0)));
-	assert(null1.insert(strSourceS,1));
-	assert(null1==strSourceS);
+	assert((null2.insert(strSourceL,0)));
+	assert(!null1.insert(strSourceS,1));
+	assert(null2==strSourceL);
 	assert(!null3.insert('c',1));
+
+	MyString s3("hello!"),	s4("hello!_insert");
+	assert(s3.insert("_insert",6));
+	assert(s3==s4);
 
 }
 
@@ -239,16 +243,24 @@ void testErase()
 {
 	MyString s1 ("This is bad sentense"), s2 ("short");
 	MyString answ1 ("This is sentense");
-	assert (s1.erase (9, 4));
+	assert (s1.erase (8, 4));
 	assert (s1 == answ1);
 	assert (! (s1 == s2));
-	assert (! (s2.erase (4, 6)));
-	assert (! (s2.erase (6, 0)));
+	assert (! (s2.erase (3, 6)));
+	assert (! (s2.erase (5, 0)));
 	MyString s3, s4;
-	assert(!s3.erase(1,1));
+	assert(!s3.erase(0,1));
 	assert(s3==s4);
-	s2.erase(1,5);
+	s2.erase(0,5);
 	assert(s2==s3);
+
+	MyString str("Hello World!");
+	assert(str.erase(0, 12));
+	assert(s4==str);
+	MyString str2("Hello World!");
+	MyString str3(str2);
+	assert(!str2.erase(1, 12));
+	assert(str2==str3);
 }
 
 void testSquare()
@@ -256,10 +268,10 @@ void testSquare()
 	MyString s1 ("This is bad sentence");
 	MyString answ1 ("This is sentence");
 	char ch1 = 'b', ch2 = 'T';
-	assert (ch1 == s1[9]);
+	assert (ch1 == s1[8]);
 	assert (! (ch1 == s1[0]));
 	MyString s2;
-	std::cout<<s2[1];
+//	std::cout<<s2[1];
 }
 
 void testPlus()
